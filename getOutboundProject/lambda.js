@@ -99,8 +99,12 @@ function getCurrentQueueDetails(QueueARN, InstanceARN) {
         ]
     };
     connect.getCurrentMetricData(METRIC_DATA, function (err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else {
+        if (err) 
+        {
+            console.log(err, err.stack); // an error occurred
+
+        }        
+         else {
             var obj = JSON.parse(data);
             returnData.AGENTS_ONLINE = obj.MetricResults[0].Collections[0].Value;
             returnData.AGENTS_AVAILABLE = obj.MetricResults[0].Collections[1].Value;
