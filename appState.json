@@ -30,6 +30,14 @@
           "timeout": 60,
           "memory": 128,
           "layers": []
+        },
+        "testCases": {
+          "f4163360-4063-4ac3-a644-2c8fa34d00f9": {
+            "id": "f4163360-4063-4ac3-a644-2c8fa34d00f9",
+            "name": "Unnamed event",
+            "functionId": "c83a130e-f81d-4412-afff-c6bbd59c4759",
+            "event": "{\n    \"key1\": \"value1\",\n    \"key2\": \"value2\",\n    \"key3\": \"value3\"\n}"
+          }
         }
       }
     },
@@ -55,7 +63,12 @@
       }
     ],
     "packageJSON": {
-      "dependencies": {}
+      "dependencies": {
+        "aws-sdk": {
+          "name": "aws-sdk",
+          "version": "2.453.0"
+        }
+      }
     }
   },
   "PROJECT_META": {
@@ -65,7 +78,7 @@
     "projectRegion": "ap-southeast-2",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1557715759090
+    "lastSave": 1557715978627
   },
   "VCS_STATE": {
     "provider": "GitHub",

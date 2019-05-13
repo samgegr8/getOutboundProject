@@ -1,6 +1,8 @@
 {
   "name": "getOutboundProject",
   "version": "1.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "2.453.0"
+  },
   "devDependencies": {}
 }
