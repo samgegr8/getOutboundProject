@@ -1,0 +1,77 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "c5b16bdc-d150-4e95-ae83-81ac06b056ec": {
+        "id": "c5b16bdc-d150-4e95-ae83-81ac06b056ec",
+        "parent": null,
+        "name": "getOutboundProject",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "c83a130e-f81d-4412-afff-c6bbd59c4759"
+        ],
+        "isRemovable": false,
+        "filePath": "getOutboundProject"
+      },
+      "c83a130e-f81d-4412-afff-c6bbd59c4759": {
+        "id": "c83a130e-f81d-4412-afff-c6bbd59c4759",
+        "parent": "c5b16bdc-d150-4e95-ae83-81ac06b056ec",
+        "name": "lambda.js",
+        "type": "LAMBDA_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "getOutboundProject/lambda.js",
+        "code": "// This Lambda Function will check DynamoDB to set up a DID for a call flow\n\n// Load the SDK for JavaScript\nvar AWS = require(\"aws-sdk\");\nAWS.config.apiVersions = {\n    connect: '2017-08-08',\n    // other service API versions\n};\n\n// Create DynamoDB document client. To access DynamoDB you need to create an AWS.DynamoDB.DocumentClient object.\nvar docClient = new AWS.DynamoDB.DocumentClient();\nvar connect = new AWS.Connect();\n\nexports.handler = async (event) => {\n\n    var qName = \"BasicQueue\";\n\n    console.log(\"Connect Event:\" + JSON.stringify(event));\n\n\n\n    var getQuery = () => {\n        return new Promise((resolve, reject) => {\n            let returnResult = {};\n            var paramsQuery = {\n                TableName: 'QueueDetails',\n                IndexName: 'QueueName-index',\n                KeyConditionExpression: \"QueueName = :qName\",\n\n                ExpressionAttributeValues: {\n                    \":qName\": qName\n                }\n            };\n            docClient.query(paramsQuery, function (err, data) {\n                if (err) {\n                    console.log(err); // an error occurred\n                    reject(err);\n                } else {\n                    console.log(\"Number of returned items from DynamoDB: \" + data.Items.length);\n                    console.log(\"DynamoDB Query Results:\" + JSON.stringify(data));\n\n                    var i = 0; //while loop counter\n\n                    if (data.Items.length > 0) {\n\n                        console.log(\"ID :\" + data.Items[i].ID);\n                        console.log(\"QueueNames:\" + data.Items[i].QueueName);\n                        console.log(\"QueueARN:\" + data.Items[i].QueueARN);\n                        //returnResult.ID = data.Items[i].ID;\n                        //returnResult.QueueName = data.Items[i].QueueName; //Initialise\n                        //returnResult.Queue = data.Items[i].QueueARN; //Iniitalise\n                        //returnResult.InstanceARN = data.Items[i].InstanceARN;\n                        returnresult = getCurrentQueueDetails(data.Items[i].QueueARN, data.Items[i].InstanceARN);\n                    } else {\n                        returnResult.lambdaResult = \"Fail\"; // initialise\n                    }\n                    console.log(\"Return Result: \" + JSON.stringify(returnResult));\n                    resolve(returnResult);\n                }\n\n            });\n        });\n    };\n\n    return await getQuery();\n};\n\n\n\nfunction getCurrentQueueDetails(QueueARN, InstanceARN) {\n    var returnData = {};\n    var METRIC_DATA = {\n        \"InstanceId\": InstanceARN,\n        \"Filters\": {\n            \"Queues\": [QueueARN],\n            \"Channels\": [\"VOICE\"]\n        },\n        \"Groupings\": [\n            \"CHANNEL\",\n            \"QUEUE\"\n        ],\n        \"CurrentMetrics\": [\n            {\n                \"Name\": \"AGENTS_ONLINE\",\n                \"Unit\": \"COUNT\"\n            },\n            {\n                \"Name\": \"AGENTS_AVAILABLE\",\n                \"Unit\": \"COUNT\"\n            },\n            {\n                \"Name\": \"OLDEST_CONTACT_AGE\",\n                \"Unit\": \"SECONDS\"\n            },\n            {\n                \"Name\": \"AGENTS_ERROR\",\n                \"Unit\": \"COUNT\"\n            }\n        ]\n    };\n    connect.getCurrentMetricData(METRIC_DATA, function (err, data) {\n        if (err) console.log(err, err.stack); // an error occurred\n        else {\n            var obj = JSON.parse(data);\n            returnData.AGENTS_ONLINE = obj.MetricResults[0].Collections[0].Value;\n            returnData.AGENTS_AVAILABLE = obj.MetricResults[0].Collections[1].Value;\n            returnData.OLDEST_CONTACT_AGE = obj.MetricResults[0].Collections[2].Value;\n            returnData.AGENTS_ERROR = obj.MetricResults[0].Collections[3].Value;\n            console.log(\"Data returned for Queue ::\" + JSON.stringify(returnData));\n\n        }// successful response\n    });\n    return returnData;\n}",
+        "triggers": [],
+        "config": {
+          "runtime": "nodejs8.10",
+          "handler": "handler",
+          "timeout": 60,
+          "memory": 128,
+          "layers": []
+        }
+      }
+    },
+    "deletedFiles": [],
+    "rootNode": "c5b16bdc-d150-4e95-ae83-81ac06b056ec",
+    "openFiles": [
+      "c83a130e-f81d-4412-afff-c6bbd59c4759"
+    ],
+    "currentFileId": "c83a130e-f81d-4412-afff-c6bbd59c4759",
+    "resources": {},
+    "customTemplate": {
+      "dialect": null,
+      "definitions": {}
+    },
+    "envVariables": [
+      {
+        "lambdaId": "all",
+        "varKey": "SIGMA_AWS_ACC_ID",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": false
+      }
+    ],
+    "packageJSON": {
+      "dependencies": {}
+    }
+  },
+  "PROJECT_META": {
+    "projectName": "getOutboundProject",
+    "projectDescription": "getOutboundProject for Test",
+    "projectVersion": "1.0.0",
+    "projectRegion": "ap-southeast-2",
+    "platform": "AWS",
+    "platformRegions": {},
+    "lastSave": 1557715759090
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "getOutboundProject",
+      "url": "https://github.com/samgegr8/getOutboundProject"
+    }
+  }
+}
